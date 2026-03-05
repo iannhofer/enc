@@ -35,7 +35,7 @@ def create_user(username, password):
         select * from users where username = ?""", (username))
         if not cursor.fetchone():
             cursor.execute("""
-            insert into users (username, password) values (?, ?)
-            """, (username, password))
+            insert into users (username, password, storage_path) values (?, ?, ?)
+            """, (username, password, "CHANGE THIS TO PATH"))
             return authenticate_user(username, password)
         return None

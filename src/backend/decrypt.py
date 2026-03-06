@@ -1,11 +1,15 @@
 from cryptography.fernet import Fernet
 
-with open("key.txt", "rb") as file:
-    key = file.read()
-f = Fernet(key)
-filename = input("Enter file path")
-with open(filename, "rb") as file:
-    encrypted_data = file.read()
-decrypted_data = f.decrypt(encrypted_data)
-with open(filename, "wb") as file:
-    file.write(decrypted_data)
+from src.backend.encrypt import load_key
+
+
+def decrypt(file_path, destination_path):
+    key = load_key()
+    f = Fernet(key)
+    with open(file_path, "rb") as file:
+        encrypted_data = file.read()
+    decrypted_data = f.decrypt(encrypted_data)
+    with open(destination_path, "wb") as file:
+        file.write(decrypted_data)
+    return destination_path
+

@@ -10,12 +10,13 @@ def load_key():
     return key
 
 
-def encrypt(file_path, destination_path):
+def encrypt(file_path):
     key = load_key()
     f = Fernet(key)
     with open(file_path, "rb") as file:
         file_data = file.read()
     encrypted_data = f.encrypt(file_data)
-    with open(destination_path+".ecnrypted", "wb") as file:
+    result = file_path + ".encrypted"
+    with open(result, "wb") as file:
         file.write(encrypted_data)
-    return destination_path
+    return result

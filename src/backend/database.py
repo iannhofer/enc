@@ -8,8 +8,7 @@ def create_db():
             create table if not exists users (
                 id integer primary key autoincrement,
                 username text unique not null,
-                password text not null,
-                storage_path text not null
+                password text not null
             )
             """
         )
@@ -32,10 +31,10 @@ def create_user(username, password):
     with sqlite3.connect("users.db") as conn:
         cursor = conn.cursor()
         cursor.execute("""
-        select * from users where username = ?""", (username))
+        select * from users where username = ?""", (username,))
         if not cursor.fetchone():
             cursor.execute("""
-            insert into users (username, password, storage_path) values (?, ?, ?)
-            """, (username, password, "CHANGE THIS TO PATH"))
+            insert into users (username, password) values (?, ?)
+            """, (username, password))
             return authenticate_user(username, password)
         return None

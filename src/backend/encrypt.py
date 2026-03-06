@@ -1,11 +1,11 @@
 from cryptography.fernet import Fernet
 
 def load_key():
-    with open("key.txt", "rb") as file:
+    with open("src/backend/key.txt", "rb") as file:
         key = file.read()
     if not key:
         key = Fernet.generate_key()
-        with open("key.txt", "wb") as file:
+        with open("src/backend/key.txt", "wb") as file:
             file.write(key)
     return key
 

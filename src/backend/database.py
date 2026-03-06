@@ -1,6 +1,7 @@
 import sqlite3
+from pathlib import Path
 
-def create_db():
+def createDb():
     with sqlite3.connect("users.db") as conn:
         cursor = conn.cursor()
         cursor.execute(
@@ -15,7 +16,8 @@ def create_db():
         conn.commit()
         print("Database and table created")
 
-def authenticate_user(username, password):
+def authenticateUser(username, password):
+    dbCheck()
     with sqlite3.connect("users.db") as conn:
         cursor = conn.cursor()
         cursor.execute(
@@ -27,7 +29,8 @@ def authenticate_user(username, password):
         user = cursor.fetchone()
         return user
 
-def create_user(username, password):
+def createUser(username, password):
+    dbCheck()
     with sqlite3.connect("users.db") as conn:
         cursor = conn.cursor()
         cursor.execute("""
@@ -36,5 +39,10 @@ def create_user(username, password):
             cursor.execute("""
             insert into users (username, password) values (?, ?)
             """, (username, password))
-            return authenticate_user(username, password)
+            conn.commit()
+            return authenticateUser(username, password)
         return None
+
+def dbCheck():
+    if not Path("users.db").is_file():
+        createDb()

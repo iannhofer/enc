@@ -4,7 +4,7 @@ import shutil
 vaultPath = "/home/inh/IdeaProjects/quantumSafeStorage/testVault"
 
 def createFolder(id):
-    newFolder = Path(vaultPath + "/" + id)
+    newFolder = Path(vaultPath + "/" + str(id))
     try:
         newFolder.mkdir(parents = True, exist_ok = False)
         print("Folder created")
@@ -12,7 +12,7 @@ def createFolder(id):
         print("following error occured: " + e)
 
 def getFolder(id):
-    userFolder = vaultPath+"/" + id
+    userFolder = Path(vaultPath+"/" + str(id))
     if not userFolder.is_dir():
         createFolder(id)
     return userFolder

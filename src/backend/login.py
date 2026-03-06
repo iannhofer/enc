@@ -1,4 +1,4 @@
-from src.backend.database import authenticate_user, create_user
+from src.backend.database import authenticateUser, createUser
 
 
 def getCredentials():
@@ -8,10 +8,12 @@ def getCredentials():
 
 def logIn():
     username, pw = getCredentials()
-    user = authenticate_user(username, pw)
+    user = authenticateUser(username, pw)
     if user is None:
-        user = create_user(username, pw)
+        print("user not found, creating user")
+        user = createUser(username, pw)
+        print("user created")
         if user is None:
-            print("unknown error")
+            print("user still not found")
             return None
     return user

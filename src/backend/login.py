@@ -13,5 +13,5 @@ def logIn():
         user = create_user(username, pw)
         if user is None:
             print("unknown error")
-            break
+            return None
     return user

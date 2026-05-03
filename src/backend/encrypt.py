@@ -1,6 +1,6 @@
 from cryptography.fernet import Fernet
 
-def load_key():
+def loadKey():
     with open("src/backend/key.txt", "rb") as file:
         key = file.read()
     if not key:
@@ -11,7 +11,7 @@ def load_key():
 
 
 def encrypt(file_path):
-    key = load_key()
+    key = loadKey()
     f = Fernet(key)
     with open(file_path, "rb") as file:
         file_data = file.read()

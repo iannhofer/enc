@@ -9,7 +9,7 @@ def createFolder(id):
         newFolder.mkdir(parents = True, exist_ok = False)
         print("Folder created")
     except Exception as e:
-        print("following error occured: " + e)
+        print("following error occured: " + str(e))
 
 def getFolder(id):
     userFolder = Path(vaultPath+"/" + str(id))

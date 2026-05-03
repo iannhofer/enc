@@ -2,11 +2,11 @@ from pathlib import Path
 
 from cryptography.fernet import Fernet
 
-from src.backend.encrypt import load_key
+from src.backend.encrypt import loadKey
 
 
 def decrypt(file_path, destination_path):
-    key = load_key()
+    key = loadKey()
     f = Fernet(key)
     with open(file_path, "rb") as file:
         encrypted_data = file.read()

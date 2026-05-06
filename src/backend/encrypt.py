@@ -7,14 +7,10 @@ load_dotenv()
 
 
 def loadKey():
-    keyPath = os.getenv("ENCRYPTION_KEY_PATH", "src/backend/key.txt")
-    with open(keyPath, "rb") as file:
-        key = file.read()
+    key = os.getenv("ENCRYPTION_KEY")
     if not key:
-        key = Fernet.generate_key()
-        with open(keyPath, "wb") as file:
-            file.write(key)
-    return key
+        raise NotImplementedError("no encryption key")
+    return key.encode()
 
 
 def encrypt(file_path):

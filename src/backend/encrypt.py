@@ -1,11 +1,18 @@
 from cryptography.fernet import Fernet
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 
 def loadKey():
-    with open("src/backend/key.txt", "rb") as file:
+    keyPath = os.getenv("ENCRYPTION_KEY_PATH", "src/backend/key.txt")
+    with open(keyPath, "rb") as file:
         key = file.read()
     if not key:
         key = Fernet.generate_key()
-        with open("src/backend/key.txt", "wb") as file:
+        with open(keyPath, "wb") as file:
             file.write(key)
     return key
 

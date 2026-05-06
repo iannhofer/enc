@@ -3,3 +3,4 @@ quantumSafeStorage.iml
 testVault/
 users.db
 venv/
+.env

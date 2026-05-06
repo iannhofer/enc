@@ -1,7 +1,12 @@
 from pathlib import Path
 import shutil
+import os
+from dotenv import load_dotenv
 
-vaultPath = "/home/inh/IdeaProjects/quantumSafeStorage/testVault"
+load_dotenv()
+
+vaultPath = os.getenv("VAULT_PATH", "vault")
+vaultPath = Path(vaultPath).resolve()
 
 def createFolder(id):
     newFolder = Path(vaultPath + "/" + str(id))

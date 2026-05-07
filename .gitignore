@@ -4,3 +4,4 @@ testVault/
 users.db
 venv/
 .env
+src/backend/key.txt

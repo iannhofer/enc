@@ -63,10 +63,20 @@ def getUserFiles(user_id):
     dbCheck()
     with sqlite3.connect("storage.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("select filename from files where userId = ?", (user_id,))
+        cursor.execute("""select filename from files where userId = ?""", (user_id,))
         files = [row[0] for row in cursor.fetchall()]
         return files
 
 def dbCheck():
     if not Path("storage.db").is_file():
         createDb()
+
+def addFile(userId, filename):
+    with sqlite3.connect("storage.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+                insert into files (userId, filename) values(?,?)
+            """, (userId, filename)
+        )
+        conn.commit()

@@ -9,7 +9,7 @@
     {% if files %}
         <ul>
             {% for file in files %}
-                <li>{{ file }}</li>
+                <li><a href="/download/{{ file }}">{{ file }}</a></li>
             {% endfor %}
         </ul>
     {% else %}

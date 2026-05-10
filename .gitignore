@@ -5,3 +5,5 @@ users.db
 venv/
 .env
 src/backend/key.txt
+__pycache__/
+*.pyc

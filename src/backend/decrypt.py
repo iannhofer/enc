@@ -11,8 +11,7 @@ def decrypt(file_path, destination_path):
     with open(file_path, "rb") as file:
         encrypted_data = file.read()
     decrypted_data = f.decrypt(encrypted_data)
-    destination_path = Path(destination_path)
-    with open(destination_path.rename(destination_path.stem), "wb") as file:
+    with open(destination_path, "wb") as file:
         file.write(decrypted_data)
     return destination_path
 

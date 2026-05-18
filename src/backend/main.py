@@ -50,13 +50,13 @@ def login(username:str=Form(...), password: str = Form(...)):
 @app.post("/upload")
 def uploadFile(userId: str | None= Cookie(None),file: UploadFile = File(...)):
     if not userId: return RedirectResponse(url="/")
-    tmpPath=f"temp_{file.filename}"
-    with open(tmpPath, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-    encTmpPath = encrypt(tmpPath)
-    storeFile(userId, encTmpPath)
+    encFileName=f"{file.filename}.encrypted"
     addFile(userId, file.filename)
-    os.remove(tmpPath)
+    from src.backend.fileManager import getFolder
+    userVault = getFolder(userId)
+    finalPath = os.path.join(userVault, encFileName)
+    with open(finalPath, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
     return RedirectResponse(url="/dashboard", statusCode=303)
 
 @app.get("/download/{filename}")
@@ -66,9 +66,8 @@ def downloadFile(filename: str, userId: str | None = Cookie(None)):
     userFiles = getUserFiles(userId)
     if filename not in userFiles:
         return Response(content="file not found", statusCode=404)
-    encryptedFilename = f"temp_{filename}.encrypted"
+    encryptedFilename = f"{filename}.encrypted"
     encryptedFilepath = os.path.join(vaultPath, str(userId), encryptedFilename)
     if not os.path.exists(encryptedFilepath):
         return Response(content="file not found", status_code=404)
-    decryptedFilepath=decrypt(encryptedFilepath, f"decrypted_{filename}")
-    return FileResponse(path=decryptedFilepath, filename = filename, media_type = "application/octet-stream")
+    return FileResponse(path = encryptedFilepath, filename = encryptedFilename, media_type = "application/octet-stream")

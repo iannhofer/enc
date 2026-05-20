@@ -23,7 +23,7 @@ def readRoot():
 @app.get("/dashboard", response_class = HTMLResponse)
 def dashboard(request: Request, user_id: str | None = Cookie(None)):
     if not user_id:
-        return RedirectResponse(url="/", statusCode = 303)
+        return RedirectResponse(url="/", status_code = 303)
     files = getUserFiles(user_id)
     return templates.TemplateResponse(
         "dashboard.html",
@@ -41,11 +41,11 @@ def login(username:str=Form(...), password: str = Form(...)):
 
     if user:
         user_id = user[0]
-        response = RedirectResponse(url="/dashboard", statusCode=303)
+        response = RedirectResponse(url="/dashboard", status_code=303)
         response.set_cookie(key="user_id", value=str(user_id))
         return response
     
-    return Response(content="Fehler beim Login/Registrieren", statusCode=400)
+    return Response(content="Fehler beim Login/Registrieren", status_code=400)
 
 @app.post("/upload")
 def uploadFile(userId: str | None= Cookie(None),file: UploadFile = File(...)):
@@ -57,7 +57,7 @@ def uploadFile(userId: str | None= Cookie(None),file: UploadFile = File(...)):
     finalPath = os.path.join(userVault, encFileName)
     with open(finalPath, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-    return RedirectResponse(url="/dashboard", statusCode=303)
+    return RedirectResponse(url="/dashboard", status_code=303)
 
 @app.get("/download/{filename}")
 def downloadFile(filename: str, userId: str | None = Cookie(None)):
@@ -65,7 +65,7 @@ def downloadFile(filename: str, userId: str | None = Cookie(None)):
         return RedirectResponse(url="/")
     userFiles = getUserFiles(userId)
     if filename not in userFiles:
-        return Response(content="file not found", statusCode=404)
+        return Response(content="file not found", status_code=404)
     encryptedFilename = f"{filename}.encrypted"
     encryptedFilepath = os.path.join(vaultPath, str(userId), encryptedFilename)
     if not os.path.exists(encryptedFilepath):

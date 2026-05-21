@@ -7,9 +7,9 @@
 <body>
     <h1> Dashboard </h1>
     {% if files %}
-        <ul>
+        <ul id="fileList">
             {% for file in files %}
-                <li><a href="/download/{{ file }}">{{ file }}</a></li>
+                <li><a href="/download/{{ file }}" class = "downloadLink">{{ file }}</a></li>
             {% endfor %}
         </ul>
     {% else %}
@@ -24,6 +24,7 @@
 <script>
     const uploadForm = document.getElementById('uploadForm');
     const fileInput = document.getElementById('file');
+    const fileList = document.getElementById('fileList');
     uploadForm.addEventListener('submit', async(event)=>{
         event.preventDefault();
         if(fileInput.files.length===0) {
@@ -57,9 +58,50 @@
                 alert("upload failed");
             }
         }catch(error){
-            alert("error during encryption or upload")
+            alert("error during encryption or upload");
         }
     })
+    fileList.addEventListener('click', async(event)=>{
+        if(event.target.classList.contains('downloadLink')){
+            event.preventDefault();
+            const link = event.target;
+            const downloadUrl = link.getAttribute('href');
+            const filename = link.textContent;
+            const encryptionKe = window.encryptionKey;
+            if (!encryptionKe) {
+                alert("enc key not found");
+                return;
+            }
+            try{
+                const response = await fetch(downloadUrl);
+                if(!response.ok){
+                    throw new Error('error after fetch(downloadUrl');
+                }
+                const blob = await response.blob();
+                const fileBuffer = await blob.arrayBuffer();
+                const iv = fileBuffer.slice(0,12);
+                const encryptedData = fileBuffer.slice(12);
+                const decryptedBuffer = await crypto.subtle.decrypt(
+                    {
+                        name: "AES-GCM",
+                        iv: iv,
+                    },
+                    encryptionKe,
+                    encryptedData
+                );
+                const decryptedBlob=new Blob([decryptedBuffer]);
+                const downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(decryptedBlob);
+                downloadLink.download = filename;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            }catch(error){
+                alert("error during encryption/download");                    }
+
+
+        }
+    });
 </script>
 </body>
 </html>

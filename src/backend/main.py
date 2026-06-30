@@ -4,9 +4,6 @@ from fastapi import FastAPI, Form, Request, Response, Cookie, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from src.backend.database import authenticateUser, createUser, getUserFiles, addFile
-from src.backend.fileManager import storeFile
-from src.backend.encrypt import encrypt
-from src.backend.decrypt import decrypt
 from src.backend.fileManager import vaultPath
 
 app = FastAPI()
@@ -32,23 +29,23 @@ def dashboard(request: Request, user_id: str | None = Cookie(None)):
 
 
 @app.post("/login")
-def login(username:str=Form(...), password: str = Form(...)):
-    user = authenticateUser(username, password)
-
-
-    if not user:
+def login(username: str = Form(...), password: str = Form(...), action: str = Form("login")):
+    if action == "register":
         user = createUser(username, password)
+        if not user:
+            return Response(content="Username already exists", status_code=400)
+    else:
+        user = authenticateUser(username, password)
+        if not user:
+            return Response(content="Invalid username or password", status_code=400)
 
-    if user:
-        user_id = user[0]
-        response = RedirectResponse(url="/dashboard", status_code=303)
-        response.set_cookie(key="user_id", value=str(user_id))
-        return response
-    
-    return Response(content="Fehler beim Login/Registrieren", status_code=400)
+    user_id = user[0]
+    response = RedirectResponse(url="/dashboard", status_code=303)
+    response.set_cookie(key="user_id", value=str(user_id))
+    return response
 
 @app.post("/upload")
-def uploadFile(userId: str | None= Cookie(None),file: UploadFile = File(...)):
+def uploadFile(userId: str | None = Cookie(None, alias="user_id"), file: UploadFile = File(...)):
     if not userId: return RedirectResponse(url="/")
     encFileName=f"{file.filename}.encrypted"
     addFile(userId, file.filename)
@@ -60,7 +57,7 @@ def uploadFile(userId: str | None= Cookie(None),file: UploadFile = File(...)):
     return RedirectResponse(url="/dashboard", status_code=303)
 
 @app.get("/download/{filename}")
-def downloadFile(filename: str, userId: str | None = Cookie(None)):
+def downloadFile(filename: str, userId: str | None = Cookie(None, alias="user_id")):
     if not userId:
         return RedirectResponse(url="/")
     userFiles = getUserFiles(userId)

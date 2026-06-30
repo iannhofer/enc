@@ -1,12 +1,17 @@
 import sqlite3
+import os
 from pathlib import Path
 from passlib.context import CryptContext
+from dotenv import load_dotenv
+
+load_dotenv()
 
 pwd_context=CryptContext(schemes=["bcrypt"], deprecated= "auto")
+dbPath = os.getenv("DATABASE_PATH", "storage.db")
 
 
 def createDb():
-    with sqlite3.connect("storage.db") as conn:
+    with sqlite3.connect(dbPath) as conn:
         cursor = conn.cursor()
         cursor.execute(
             """
@@ -29,7 +34,7 @@ def createDb():
 
 def authenticateUser(username, password):
     dbCheck()
-    with sqlite3.connect("storage.db") as conn:
+    with sqlite3.connect(dbPath) as conn:
         cursor = conn.cursor()
         cursor.execute(
             """
@@ -47,7 +52,7 @@ def authenticateUser(username, password):
 def createUser(username, password):
     dbCheck()
     hashedPw = pwd_context.hash(password)
-    with sqlite3.connect("storage.db") as conn:
+    with sqlite3.connect(dbPath) as conn:
         cursor = conn.cursor()
         cursor.execute("""
         select * from users where username = ?""", (username,))
@@ -61,18 +66,18 @@ def createUser(username, password):
 
 def getUserFiles(user_id):
     dbCheck()
-    with sqlite3.connect("storage.db") as conn:
+    with sqlite3.connect(dbPath) as conn:
         cursor = conn.cursor()
         cursor.execute("""select filename from files where userId = ?""", (user_id,))
         files = [row[0] for row in cursor.fetchall()]
         return files
 
 def dbCheck():
-    if not Path("storage.db").is_file():
+    if not Path(dbPath).is_file():
         createDb()
 
 def addFile(userId, filename):
-    with sqlite3.connect("storage.db") as conn:
+    with sqlite3.connect(dbPath) as conn:
         cursor = conn.cursor()
         cursor.execute(
             """

@@ -9,7 +9,7 @@ vaultPath = os.getenv("VAULT_PATH", "vault")
 vaultPath = Path(vaultPath).resolve()
 
 def createFolder(id):
-    newFolder = Path(vaultPath + "/" + str(id))
+    newFolder = vaultPath / str(id)
     try:
         newFolder.mkdir(parents = True, exist_ok = False)
         print("Folder created")
@@ -17,7 +17,7 @@ def createFolder(id):
         print("following error occured: " + str(e))
 
 def getFolder(id):
-    userFolder = Path(vaultPath+"/" + str(id))
+    userFolder = vaultPath / str(id)
     if not userFolder.is_dir():
         createFolder(id)
     return userFolder

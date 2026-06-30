@@ -22,6 +22,30 @@
         <button type = "submit">Upload</button>
     </form>
 <script>
+    async function restoreKey() {
+        const jwkString = sessionStorage.getItem("encryptionKey");
+        if (!jwkString) {
+            alert("No encryption key found in session. Please log in again.");
+            window.location.href = "/";
+            return;
+        }
+        try {
+            const jwk = JSON.parse(jwkString);
+            window.encryptionKey = await crypto.subtle.importKey(
+                "jwk",
+                jwk,
+                { name: "AES-GCM" },
+                true,
+                ["encrypt", "decrypt"]
+            );
+        } catch (error) {
+            console.error("Failed to restore encryption key:", error);
+            alert("Error restoring encryption key. Please log in again.");
+            window.location.href = "/";
+        }
+    }
+    restoreKey();
+
     const uploadForm = document.getElementById('uploadForm');
     const fileInput = document.getElementById('file');
     const fileList = document.getElementById('fileList');

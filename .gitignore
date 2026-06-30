@@ -7,3 +7,5 @@ venv/
 src/backend/key.txt
 __pycache__/
 *.pyc
+storage.db
+vault/

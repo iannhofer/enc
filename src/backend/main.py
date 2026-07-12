@@ -23,8 +23,9 @@ def dashboard(request: Request, user_id: str | None = Cookie(None)):
         return RedirectResponse(url="/", status_code = 303)
     files = getUserFiles(user_id)
     return templates.TemplateResponse(
-        "dashboard.html",
-        {"request": request, "files": files}
+        request=request,
+        name="dashboard.html",
+        context={"files": files}
     )
 
 

@@ -85,3 +85,5 @@ def addFile(userId, filename):
             """, (userId, filename)
         )
         conn.commit()
+def deleteUser(userId):
+    return None

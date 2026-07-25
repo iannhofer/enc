@@ -85,5 +85,26 @@ def addFile(userId, filename):
             """, (userId, filename)
         )
         conn.commit()
-def deleteUser(userId):
-    return None
+
+def deleteUserFiles(userId):
+    with sqlite3.connect(dbPath) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+                delete from files where userId = ?
+            """,
+            (userId,)
+        )
+        conn.commit()
+
+def deleteUserDB(userId):
+    deleteUserFiles(userId)
+    with sqlite3.connect(dbPath) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+                delete from users where userId =?
+            """,
+            (userId,)
+        )
+        conn.commit()

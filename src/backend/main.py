@@ -3,8 +3,8 @@ import shutil
 from fastapi import FastAPI, Form, Request, Response, Cookie, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.templating import Jinja2Templates
-from src.backend.database import authenticateUser, createUser, getUserFiles, addFile
-from src.backend.fileManager import vaultPath
+from src.backend.database import authenticateUser, createUser, getUserFiles, addFile, deleteUserDB
+from src.backend.fileManager import vaultPath, deleteFolder
 
 app = FastAPI()
 
@@ -69,3 +69,11 @@ def downloadFile(filename: str, userId: str | None = Cookie(None, alias="user_id
     if not os.path.exists(encryptedFilepath):
         return Response(content="file not found", status_code=404)
     return FileResponse(path = encryptedFilepath, filename = encryptedFilename, media_type = "application/octet-stream")
+
+@app.delete("/deleteUser/{userId}")
+def deleteUser(userId: str | None = Cookie(None, alias="user_id")):
+    if not userId:
+        return Response(content="user not found", status_code=404)
+    deleteFolder(userId)
+    deleteUserDB(userId)
+    return RedirectResponse(url="/", status_code=303)

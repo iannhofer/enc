@@ -22,6 +22,10 @@ def getFolder(id):
         createFolder(id)
     return userFolder
 
+def deleteFolder(id):
+    folder = getFolder(id)
+    shutil.rmtree(folder)
+
 def storeFile(userId, file):
     destination = getFolder(userId)
     shutil.move(file, destination)

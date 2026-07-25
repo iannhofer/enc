@@ -6,7 +6,6 @@ from fastapi.testclient import TestClient
 import random
 from pathlib import Path
 import os
-from src.backend.database import deleteUser
 
 
 
@@ -64,11 +63,11 @@ class TestVulnerabilities(unittest.TestCase):
         for filename in self.files:
             os.remove(filename)
         for user in self.users:
-            deleteUser(user)
+            self.client.cookies.set("user_id", str(user))
+            self.client.delete("/deleteUser/"+str(user))
 
 if __name__ == "__main__":
     unittest.main()
-
 
 
 

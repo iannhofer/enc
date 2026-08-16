@@ -103,7 +103,7 @@ def deleteUserDB(userId):
         cursor = conn.cursor()
         cursor.execute(
             """
-                delete from users where userId =?
+                delete from users where id =?
             """,
             (userId,)
         )

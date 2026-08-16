@@ -71,9 +71,7 @@ def downloadFile(filename: str, userId: str | None = Cookie(None, alias="user_id
     return FileResponse(path = encryptedFilepath, filename = encryptedFilename, media_type = "application/octet-stream")
 
 @app.delete("/deleteUser/{userId}")
-def deleteUser(userId: str | None = Cookie(None, alias="user_id")):
-    if not userId:
-        return Response(content="user not found", status_code=404)
+def deleteUser(userId: str):
     deleteFolder(userId)
     deleteUserDB(userId)
     return RedirectResponse(url="/", status_code=303)

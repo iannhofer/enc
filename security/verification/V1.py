@@ -23,6 +23,7 @@ class TestVulnerabilities(unittest.TestCase):
         self.uploadFile(cookie1, code, filename)
 
         cookie2 = self.createUser("V1_user2")
+        self.client.cookies.set("user_id", str(cookie2))
         self.assertIn("No data", self.client.get("/dashboard").text)
         self.uploadFile(cookie1, "-1", filename)
         self.assessIntegrity(cookie1, code, filename)
@@ -38,7 +39,7 @@ class TestVulnerabilities(unittest.TestCase):
 
     def createUser(self, username):
         response = self.client.post("/login", data = {"username":username, "password": "123", "action": "register"})
-        cookie = response.cookies.get("user_id")
+        cookie = self.client.cookies.get("user_id")
         self.users.append(cookie)
         return cookie
     
@@ -61,7 +62,8 @@ class TestVulnerabilities(unittest.TestCase):
 
         """to be implemeted, first create method to delete user"""
         for filename in self.files:
-            os.remove(filename)
+            if os.path.exists(filename):
+                os.remove(filename)
         for user in self.users:
             self.client.cookies.set("user_id", str(user))
             self.client.delete("/deleteUser/"+str(user))
